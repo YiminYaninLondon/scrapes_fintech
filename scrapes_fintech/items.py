@@ -10,7 +10,7 @@ import scrapy
 #     # define the fields for your item here like:
 #     # name = scrapy.Field()
 #     pass
-class StableIndexPriceItem(scrapy.Item):
+class FintechIndexPriceItem(scrapy.Item):
     source = scrapy.Field()  # What provider was this info sourced from?
     source_url = scrapy.Field()  # What is the specific url it was sourced from?
     original_index_id = scrapy.Field()

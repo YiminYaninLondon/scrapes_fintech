@@ -2,7 +2,7 @@ import scrapy
 import pandas as pd
 from decimal import Decimal, DecimalException
 import math
-from scrapes_fintech.scrapes_fintech.items import StableIndexPriceItem
+from scrapes_fintech.scrapes_fintech.items import FintechIndexPriceItem
 import imaplib
 import email
 from io import BytesIO
