@@ -6,6 +6,7 @@ import time
 from io import BytesIO
 import pandas as pd
 import os
+'https://stackoverflow.com/questions/47019839/python-selenium-with-chrome-how-to-download-to-a-specified-folder-with-specifie'
 
 PATH_SEPARATOR = "\t"
 env = Env()
