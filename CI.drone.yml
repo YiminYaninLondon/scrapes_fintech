@@ -1,0 +1,65 @@
+---
+kind: pipeline
+type: kubernetes
+name: image
+
+steps:
+  - name: build
+    image: plugins/ecr
+    settings:
+      access_key:
+        from_secret: aws_access_key_id
+      secret_key:
+        from_secret: aws_secret_access_key
+      registry: 520107723908.dkr.ecr.eu-west-2.amazonaws.com
+      region: eu-west-2
+      repo: scrapy-project-dev
+      dockerfile: docker/Dockerfile
+---
+kind: pipeline
+type: kubernetes
+name: deploy
+
+steps:
+  - name: deploy_deps
+    image: docker:git
+    commands:
+      - git clone https://github.com/theaox/platform-terragrunt.git /git/platform-terragrunt
+    volumes:
+      - name: git
+        path: /git
+  - name: deploy
+    image: alpine/terragrunt
+    commands:
+      - mkdir /root/.ssh
+      - mkdir /root/.aws
+      - echo "$$SSH_KEY" > /root/.ssh/id_rsa
+      - chmod 0600 /root/.ssh/id_rsa
+      - ssh-keyscan github.com >> ~/.ssh/known_hosts
+      - cd /git/platform-terragrunt/dev/
+      - terragrunt apply-all --var-file=/drone/src/schedule.tfvars
+    environment:
+      TERRAGRUNT_WORKING_DIR: scrapyd
+      TF_INPUT: false
+      SSH_KEY:
+        from_secret: deploy_ssh_key
+      AWS_ACCESS_KEY_ID:
+        from_secret: aws_access_key_id
+      AWS_SECRET_ACCESS_KEY:
+        from_secret: aws_secret_access_key
+      AWS_DEFAULT_REGION: eu-west-2
+    volumes:
+      - name: git
+        path: /git
+
+depends_on:
+  - image
+
+volumes:
+- name: git
+  temp: {}
+---
+kind: signature
+hmac: 0f68bf8a35b57ae5e11e369fa3cf32685f0298070883f1373f332b67ceee6570
+
+...
