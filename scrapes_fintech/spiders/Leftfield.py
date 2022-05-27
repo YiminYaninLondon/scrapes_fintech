@@ -2,7 +2,8 @@ import scrapy
 import pandas as pd
 from decimal import Decimal, DecimalException
 import math
-from scrapes_fintech.scrapes_fintech.items import FintechIndexPriceItem
+import sys
+from scrapes_fintech.items import FintechIndexPriceItem
 import imaplib
 import email
 from io import BytesIO
@@ -76,7 +77,7 @@ class LeftfieldSpider(scrapy.Spider):
                                     try:
                                         price = Decimal(str(price).replace('*', '').strip())
                                         if not math.isnan(price):
-                                            report_item = StableIndexPriceItem(
+                                            report_item = FintechIndexPriceItem(
                                                 source=SOURCE,
                                                 source_url=f'Email: {file_name}',
                                                 original_index_id=original_index_id,
